@@ -16,13 +16,13 @@ I chose to analyze Crime and Punishment by Fyodor Dostoevsky. This is one of my 
 I downloaded the txt file from the Gutenberg Project. Excluding the foreword and the ending citation of Gutenberg project, I turned it into a tibble. 
   
 ```{r}
-sentiment_graph
+lexicons
 ```
   
   
 Generally, the visualization of the sentiment analysis matches the plotline of the book. The book is split into 6 parts with 1 epilogue. In the first part, the protagonist Raskolnikov commits murder; the next 5 parts describe in detail the moral anguish that Raskolnikov faces and the slow hunt as the detective gets closer to figuring him out. It makes sense that the sentiment through most of the book is negative. I was surprised to see that there wasn't much a huge positive sentiment difference at the very end of the book. In the epilogue, Raskolnikov confesses to his crime, and though he ends up in prison, he begins to accept unconditional love from Sonya and turns towards religion to start his journey towards redemption and moral restitution. That's why I anticipated seeing such a large positive spike at the end, since it is the first time in the book where he is open to concepts such as "friendliness" and "love" and "redemption." However, it makes sense that there isn't a huge peak because he is still in prison, so the words probably pick up on that as a negative sentiment.  
   
-  
+The different lexicons use different methods of categorizing sentiment. For example, NRC assigns factor(s) of sentiment, like trust, fear, or sadness, while Bing labels "negative" or "positive." Afinn assigns smaller scale values to different words on a numeric scale (like -2 for negative sentiment). All of the lexicons seem to pick up on the general trend of the sentiment throughout the novel. The only differences that I see are a few select indices that differ in their sign (e.g. index 130).    
   
 ## Task 3: sentence-level analysis
   

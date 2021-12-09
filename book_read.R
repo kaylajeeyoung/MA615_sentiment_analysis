@@ -15,18 +15,48 @@ text <- text[-c(21970:22320)]
 crime <- tibble(line = 1:21969, text = text)
 crime <- crime %>%
   unnest_tokens(word,text)
-get_sentiments("nrc")
+#get_sentiments("nrc")
 
 
-crime_sentiment <- crime %>%
+crime_sentiment_bing <- crime %>%
   inner_join(get_sentiments("bing")) %>%
   count(index = line %/% 120, sentiment) %>%
   pivot_wider(names_from = sentiment, values_from = n, values_fill = 0) %>% 
   mutate(sentiment = positive - negative)
 
-sentiment_graph <- ggplot(crime_sentiment, aes(index, sentiment)) +
-  geom_col(show.legend = FALSE, aes(fill = "red")) + theme_bw() + 
-  ggtitle("Sentiment of Crime and Punishment") + xlab("Index (by 120 lines")
+afinn <- crime %>% 
+  inner_join(get_sentiments("afinn")) %>% 
+  group_by(index = line %/% 120) %>% 
+  summarise(sentiment = sum(value)) %>% 
+  mutate(method = "AFINN")
+
+bing_and_nrc <- bind_rows(
+  crime %>% 
+    inner_join(get_sentiments("bing")) %>%
+    mutate(method = "Bing et al."),
+  crime %>% 
+    inner_join(get_sentiments("nrc") %>% 
+                 filter(sentiment %in% c("positive", 
+                                         "negative"))
+    ) %>%
+    mutate(method = "NRC")) %>%
+  count(method, index = line %/% 120, sentiment) %>%
+  pivot_wider(names_from = sentiment,
+              values_from = n,
+              values_fill = 0) %>% 
+  mutate(sentiment = positive - negative)
+
+lexicons <- bind_rows(afinn, 
+          bing_and_nrc) %>%
+  ggplot(aes(index, sentiment, fill = method)) +
+  geom_col(show.legend = FALSE) +
+  facet_wrap(~method, ncol = 1, scales = "free_y") + theme_bw() + 
+  ggtitle("Sentiment Analysis across different lexicons") + 
+  xlab("Index (by 120 lines)")
+
+#sentiment_graph <- ggplot(crime_sentiment, aes(index, sentiment)) +
+#  geom_col(show.legend = FALSE, aes(fill = "red")) + theme_bw() + 
+#  ggtitle("Sentiment of Crime and Punishment") + xlab("Index (by 120 lines)")
 
 
 ####Sentence sentimentr
