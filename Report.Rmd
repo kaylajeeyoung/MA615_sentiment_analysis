@@ -6,7 +6,7 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = FALSE)
 source("book_read.R")
 ```
 
@@ -15,6 +15,58 @@ source("book_read.R")
 I chose to analyze Crime and Punishment by Fyodor Dostoevsky. This is one of my favorite books out of the ones I had to read in high school.   
 I downloaded the txt file from the Gutenberg Project. Excluding the foreword and the ending citation of Gutenberg project, I turned it into a tibble. 
   
+```{r}
+sentiment_graph
+```
   
-Generally, the visualization of the sentiment analysis matches the plotline of the book. The book is split into 6 parts with 1 epilogue. In the first part, the protagonist Raskolnikov commits murder; the next 5 parts describe in detail the moral anguish that Raskolnikov faces and the slow hunt as the detective gets closer to figuring him out. It makes sense that the sentiment through most of the book is negative. I was surprised to see that there wasn't much a huge positive sentiment difference at the very end of the book. In the epilogue, Raskolnikov confesses to his crime, and though he ends up in prison, he begins to accept unconditional love from Sonya and turns towards religion to start his journey towards redemption and moral restitution. That's why I anticipated seeing such a large positive spike at the end, since it is the first time in the book where he is open to concepts such as "friendliness" and "love" and "redemption." However, it makes sense that there isn't a huge peak because he is still in prison, so the words probably pick up on that as a negative sentiment.    
   
+Generally, the visualization of the sentiment analysis matches the plotline of the book. The book is split into 6 parts with 1 epilogue. In the first part, the protagonist Raskolnikov commits murder; the next 5 parts describe in detail the moral anguish that Raskolnikov faces and the slow hunt as the detective gets closer to figuring him out. It makes sense that the sentiment through most of the book is negative. I was surprised to see that there wasn't much a huge positive sentiment difference at the very end of the book. In the epilogue, Raskolnikov confesses to his crime, and though he ends up in prison, he begins to accept unconditional love from Sonya and turns towards religion to start his journey towards redemption and moral restitution. That's why I anticipated seeing such a large positive spike at the end, since it is the first time in the book where he is open to concepts such as "friendliness" and "love" and "redemption." However, it makes sense that there isn't a huge peak because he is still in prison, so the words probably pick up on that as a negative sentiment.  
+  
+  
+  
+## Task 3: sentence-level analysis
+  
+I've used tnum to load the book into test3 numberspace (not test2, it was running too slowly).    
+  
+```{r, echo = TRUE, include = TRUE}
+q1[[1]]
+head(d1)
+```
+  
+Looking at the ingested data, I created a word cloud.  
+  
+```{r}
+crime %>%
+  inner_join(get_sentiments("bing")) %>%
+  count(word, sentiment, sort = TRUE) %>%
+  acast(word ~ sentiment, value.var = "n", fill = 0) %>%
+  comparison.cloud(colors = brewer.pal(7, "Set1"),
+                   max.words = 100)
+```
+  
+Now looking at the most negative words used, using Bing as the lexicon, we have: 
+  
+```{r}
+head(negative_words %>% arrange(desc(n)))
+```
+  
+This is really interesting! I do remember in this book that "strange" is used a lot, especially because Raskolnikov likes to mumble "strange... strange" to himself. "Afraid," "pale," and "lying" all also make sense because Raskolnikov committed murder and he is afraid of being caught, so these are all words that describe him being on edge around the detectives.   
+  
+Now I can investigate sentiment polarity on a sentence level using truenumbers. I used -0.2 and 0.2 for cutoffs of negative and positive sentiments respectively, with "neutral" being the category between them. I plotted the sentiment of the sentences, but it is hard to see a general trend. I provide a table with the summary data for reference.     
+  
+```{r}
+ggplot(sentence_polarity, aes(x = sentence_id, y = sentiment)) + geom_point() + 
+  theme_bw() + xlab("sentence number") + ggtitle("Sentiment per sentence") 
+
+sentence_polarity %>% 
+  filter(polarity_level == "Negative") %>% summary(sentence_id)
+
+sentence_polarity %>% 
+  filter(polarity_level == "Negative") %>% summary(sentence_id)
+```
+   
+   
+### Analysis
+  
+The book is based on the idea of duality: crime and punishment. According to the foreward in the translated book, Dostoevsky apparently was aware of the artistic form of writing, and he purposefully made the book "symmetric" in its negative and positive connotations, and with the character development of the main character Raskolnikov. His name literally means "schism," and the book demonstrates the transition from one personality (logical) to another (emotional). The sentiment analysis I have done here on both a word and sentence level speak to what Dostoevsky claimed to do. I thought this was an interesting word sentiment analysis to perform on one of my favorite books.   
+    

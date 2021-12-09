@@ -1,1 +1,3 @@
 # MA615_sentiment_analysis
+
+A sentiment analysis on Crime and Punishment by Fyodor Dostoevsky using tidytext, sentimentr and truenumbers packages. I obtained the book text file from the Gutenberg project, and explore the sentiment throughout the novel on a word and also on a sentence level while comparing the obtained results to the actual summary of the book to confirm whether the results make sense. 
