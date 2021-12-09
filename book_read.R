@@ -43,7 +43,10 @@ crime_punishment <- gutenberg_download(2554)
 crime_punishment <- crime_punishment[-c(4:97),]
 
 source("Book2TN.R")
-tnBooksFromLines(crime_punishment$text, "dostoevsky/Crime_and_Punishment")
+tnBooksFromLines(crime_punishment$text[c(1:5000)], "dostoevsky/Crime_and_Punishment/Pt1")
+tnBooksFromLines(crime_punishment$text[c(5001:10000)], "dostoevsky/Crime_and_Punishment/Pt2")
+tnBooksFromLines(crime_punishment$text[c(10001:15000)], "dostoevsky/Crime_and_Punishment/Pt3")
+tnBooksFromLines(crime_punishment$text[c(15001:21967)], "dostoevsky/Crime_and_Punishment/Pt4")
 
 # tnBooksFromLines <- function(theBook, subjectRoot){
 #   sentence <- "" #accumulates a sentence across line
